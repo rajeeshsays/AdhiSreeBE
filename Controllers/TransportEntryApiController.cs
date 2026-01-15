@@ -69,18 +69,23 @@ namespace TransportService.Controllers.api
            }
         }
 
-        [HttpGet]
+        [HttpGet("getall/{page}/{pageSize}")]
         public async Task<IActionResult> GetAllAsync(int page, int pageSize)
         {
            if (_context == null)
                return StatusCode(500, "Database context is not available.");
            string cacheKey = $"TransportEntryData_page{page}_pageSize_{pageSize}";
            //if (!_cache.TryGetValue(cacheKey, out List<TransportEntry>? transData))
-            var transData = await (from te in _context.TransportEntry.Include(te => te.Vehicle)
-                                                    
-             join dg in _context.DestinationGroups on te.ID equals dg.TransportId into dgGroup
-             from dg in dgGroup.DefaultIfEmpty() 
-             select dg).ToListAsync();
+           var transData = await (
+    from te in _context.TransportEntry
+        .Include(te => te.Vehicle)
+
+    join dg in _context.DestinationGroups
+        on te.ID equals dg.TransportId into dgGroup
+
+    from dg in dgGroup.DefaultIfEmpty()
+    select te
+).Distinct().ToListAsync();
                // where te.ID == page && dg.ID == pageSize
               
            var cacheEntryOptions = new MemoryCacheEntryOptions()
