@@ -7,6 +7,7 @@ using TransportService.DataAccess;
 using TransportService.Model;
 using TransportService.DTO;
 using AdhiSreeTransportService.Migrations;
+using System.Linq;
 
 namespace TransportService.Controllers.api
 {
@@ -104,71 +105,77 @@ namespace TransportService.Controllers.api
         }
 
  
-       [HttpPost("create")]
-        public async Task<IActionResult> CreateAsync([FromBody] TransportModel transportData)
+   [HttpPost("create")]
+public async Task<IActionResult> CreateAsync([FromBody] TransportModel transportData)
+{
+    if (transportData?.TransportEntry == null ||
+        transportData.DestinationGroup?.DestinationIds == null ||
+        !transportData.DestinationGroup.DestinationIds.Any())
+    {
+        return BadRequest("Invalid transport entry or destination group data.");
+    }
+
+    try
+    {
+        // 1️⃣ Create TransportEntry (PARENT)
+        var transportEntry = new TransportEntry
         {
-           //if (transportData.TransportEntry == null || transportData.DestinationGroup == null)
-              if (transportData == null)
-               return BadRequest("Invalid transport entry data.");
-           try
-           {
-               if (transportData.TransportEntry != null && transportData.DestinationGroup != null)
-               {
-                   var transportEntry = new TransportEntry
-                   {
-                   
+            Date = transportData.TransportEntry.Date,
+            VehicleId = transportData.TransportEntry.VehicleId,
+            VehicleTypeId = transportData.TransportEntry.VehicleTypeId,
+            DriverId = transportData.TransportEntry.DriverId,
+            Party1 = transportData.TransportEntry.Party1,
+            From = transportData.TransportEntry.From,
+            To = transportData.TransportEntry.To,
+            StartKM = transportData.TransportEntry.StartKM,
+            CloseKM = transportData.TransportEntry.CloseKM,
+            Total = transportData.TransportEntry.Total,
+            Loading = transportData.TransportEntry.Loading,
+            Unloading = transportData.TransportEntry.Unloading,
+            LoadingCommision = transportData.TransportEntry.LoadingCommision,
+            UnloadingCommision = transportData.TransportEntry.UnloadingCommision,
+            ReturnDestinationId = transportData.TransportEntry.ReturnDestinationId,
+            HaltDays = transportData.TransportEntry.HaltDays,
+            Rent = transportData.TransportEntry.Rent,
+            Narration = transportData.TransportEntry.Narration,
+            Other = transportData.TransportEntry.Other,
+            AccountId = transportData.TransportEntry.AccountId
+        };
 
-                    Date =  transportData.TransportEntry.Date,
-                    VehicleId = transportData.TransportEntry.VehicleId,
-                    VehicleTypeId = transportData.TransportEntry.VehicleTypeId,
-                    DriverId = transportData.TransportEntry.DriverId,
-                    Party1 = transportData.TransportEntry.Party1,
-                    DestinationGroupId = transportData.TransportEntry.DestinationGroupId,
-                    From = transportData.TransportEntry.From,
-                    To = transportData.TransportEntry.To,
-                    StartKM = transportData.TransportEntry.StartKM,
-                    CloseKM = transportData.TransportEntry.CloseKM,
-                    Total = transportData.TransportEntry.Total,
-                    Loading = transportData.TransportEntry.Loading,
-                    Unloading = transportData.TransportEntry.Unloading,
-                    LoadingCommision = transportData.TransportEntry.LoadingCommision,
-                    UnloadingCommision = transportData.TransportEntry.UnloadingCommision,
-                    ReturnDestinationId = transportData.TransportEntry.ReturnDestinationId,
-                    HaltDays = transportData.TransportEntry.HaltDays,
-                    Rent = transportData.TransportEntry.Rent,
-                    Narration = transportData.TransportEntry.Narration,
-                    Other = transportData.TransportEntry.Other,
-                    AccountId = transportData.TransportEntry.AccountId,
-                       // Map properties from DTO to entity
-                       // Example: ID = transportData.TransportEntry.ID,
-                       // Add other property mappings as needed
-                   };
-                   await _context.TransportEntry.AddAsync(transportEntry);
+        await _context.TransportEntry.AddAsync(transportEntry);
 
-                    foreach(short destinationId in transportData.DestinationGroup.DestinationIds)
-                    {
-                        var destGroup = new DestinationGroup
-                        {
-                            DestinationId = destinationId,
-                            TransportId = transportEntry.ID,
-                        };
-                        await _context.DestinationGroups.AddAsync(destGroup);
-                    }
+        // 2️⃣ Save FIRST to generate TransportEntry.ID
+        await _context.SaveChangesAsync();
 
-                  await _context.SaveChangesAsync();
-                   return Ok("Transport entry record created successfully.");
-               }
-               else
-               {
-                   return BadRequest("Invalid transport entry or destination group data.");
-               }
-           }
-           catch
-           {
-               return StatusCode(500, "Failed to create the transport entry record.");
-           }
+        // 3️⃣ Validate DestinationIds against Party table
+        var destinationIds = transportData.DestinationGroup.DestinationIds;
 
-        }
+        // 4️⃣ Create DestinationGroups (CHILD)
+        var destinationGroups = destinationIds.Select(destinationId =>
+            new DestinationGroup
+            {
+                TransportId = transportEntry.ID, // NOW VALID
+                DestinationId = (short)destinationId
+            }).ToList();
+
+        await _context.DestinationGroups.AddRangeAsync(destinationGroups);
+
+        // 5️⃣ Save children
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            Message = "Transport entry record created successfully.",
+            TransportId = transportEntry.ID
+        });
+    }
+    catch (Exception ex)
+    {
+        // OPTIONAL: log ex
+        return StatusCode(500, "Failed to create the transport entry record.");
+    }
+}
+
 
         // PUT api/<SalesController>/5
         [HttpPut("{id}")]
@@ -181,7 +188,7 @@ namespace TransportService.Controllers.api
            //bool success = await _transportEntryDA.UpdateAsync(transportEntryForUpdate); // returns true if updated
            try
            {
-               _context.Entry(transportEntryForUpdate).State = EntityState.Modified;
+               _context?.Update(transportEntryForUpdate);
                await _context.SaveChangesAsync();
                return Ok("Transport entry record updated and cache cleared.");
            }
