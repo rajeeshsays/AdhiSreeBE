@@ -178,33 +178,83 @@ public async Task<IActionResult> CreateAsync([FromBody] TransportModel transport
 
 
         // PUT api/<SalesController>/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutAsync(int id, [FromBody] TransportEntry transportEntryForUpdate)
+[HttpPut("{id}")]
+public async Task<IActionResult> PutAsync(int id,[FromBody] TransportModel model)
+{
+    if (model?.TransportEntry == null ||
+        model.DestinationGroup?.DestinationIds == null ||
+        !model.DestinationGroup.DestinationIds.Any())
+    {
+        return BadRequest("Invalid transport entry or destination group data.");
+    }
+
+    // Fetch existing TransportEntry
+    var transportEntry = await _context.TransportEntry
+        .Include(t => t.DestinationGroups)
+        .FirstOrDefaultAsync(t => t.ID == id);
+
+    if (transportEntry == null)
+    {
+        return NotFound($"Transport entry with ID {id} not found.");
+    }
+
+    await using var transaction = await _context.Database.BeginTransactionAsync();
+
+    try
+    {
+        // 1️⃣ Update parent entity
+        var dto = model.TransportEntry;
+
+        transportEntry.Date = dto.Date;
+        transportEntry.VehicleId = dto.VehicleId;
+        transportEntry.VehicleTypeId = dto.VehicleTypeId;
+        transportEntry.DriverId = dto.DriverId;
+        transportEntry.Party1 = dto.Party1;
+        transportEntry.From = dto.From;
+        transportEntry.To = dto.To;
+        transportEntry.StartKM = dto.StartKM;
+        transportEntry.CloseKM = dto.CloseKM;
+        transportEntry.Total = dto.Total;
+        transportEntry.Loading = dto.Loading;
+        transportEntry.Unloading = dto.Unloading;
+        transportEntry.LoadingCommision = dto.LoadingCommision;
+        transportEntry.UnloadingCommision = dto.UnloadingCommision;
+        transportEntry.ReturnDestinationId = dto.ReturnDestinationId;
+        transportEntry.HaltDays = dto.HaltDays;
+        transportEntry.Rent = dto.Rent;
+        transportEntry.Narration = dto.Narration;
+        transportEntry.Other = dto.Other;
+        transportEntry.AccountId = dto.AccountId;
+
+        // 2️⃣ Remove existing DestinationGroups
+        _context.DestinationGroups.RemoveRange(transportEntry.DestinationGroups);
+
+        // 3️⃣ Add new DestinationGroups
+        transportEntry.DestinationGroups = model.DestinationGroup.DestinationIds
+            .Select(destinationId => new DestinationGroup
+            {
+                TransportId = transportEntry.ID,
+                DestinationId = (short)destinationId
+            })
+            .ToList();
+
+        // 4️⃣ Save changes
+        await _context.SaveChangesAsync();
+        await transaction.CommitAsync();
+
+        return Ok(new
         {
-           if (transportEntryForUpdate == null)
-               return BadRequest("Invalid transport entry data.");
+            Message = "Transport entry updated successfully.",
+            TransportId = transportEntry.ID
+        });
+    }
+    catch (Exception)
+    {
+        await transaction.RollbackAsync();
+        return StatusCode(500, "Failed to update the transport entry record.");
+    }
+}
 
-           // 1. Update the database
-           //bool success = await _transportEntryDA.UpdateAsync(transportEntryForUpdate); // returns true if updated
-           try
-           {
-               _context?.Update(transportEntryForUpdate);
-               await _context.SaveChangesAsync();
-               return Ok("Transport entry record updated and cache cleared.");
-           }
-           catch (DbUpdateConcurrencyException)
-           {
-               return StatusCode(StatusCodes.Status500InternalServerError, "A concurrency error occurred");
-
-           }
-           catch (DbUpdateException)
-           {
-               return StatusCode(StatusCodes.Status500InternalServerError, "Failed to update transport entry.");
-
-           }
-            // 2. Invalidate relevant cache entries
-           //InvalidateSalesCache();
-        }
 
 
         //DELETE api/<SalesController>/5

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AdhiSreeTransportService")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+64ed18209997c935aa8753578b61bb6b87d9fe5a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+67fac130ea1166033d9810ba25a96902a6865ef9")]
 [assembly: System.Reflection.AssemblyProductAttribute("AdhiSreeTransportService")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AdhiSreeTransportService")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
