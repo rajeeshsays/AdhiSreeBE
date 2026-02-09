@@ -99,6 +99,7 @@ namespace TransportService.Controllers.api
                return StatusCode(500, "Database context is not available.");
            string cacheKey = $"TransportEntryData_page{page}_pageSize_{pageSize}";
            //if (!_cache.TryGetValue(cacheKey, out List<TransportEntry>? transData))
+
             var driver = await (from te in _context.Driver
                                                                          
               select te).ToListAsync();
@@ -171,9 +172,12 @@ namespace TransportService.Controllers.api
 
         //DELETE api/<SalesController>/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(long id)
+        public async Task<IActionResult> DeleteAsync(short id)
         {
-           var driver = await _context.Driver.FindAsync(id);
+          
+           try
+            {
+                var driver = await _context.Driver.FindAsync(id);
            if (driver == null)
            {
                return NotFound(); // 404
@@ -181,6 +185,17 @@ namespace TransportService.Controllers.api
            _context.Entry(driver).State = EntityState.Deleted;
            await _context.SaveChangesAsync();
            return NoContent(); // 204
+                
+            }
+            catch(DbUpdateException ex) when (ex.InnerException?.Message.Contains("FOREIGN KEY") == true)
+            {
+                return Conflict(new
+                        {
+                            message = "Driver is referenced by other records and cannot be deleted."
+                        });
+            }
+           
+           
         }
 
         // [HttpGet("clearcache")]

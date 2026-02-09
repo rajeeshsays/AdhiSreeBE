@@ -104,7 +104,7 @@ namespace TransportService.Controllers.api
                 GstNo = partyModel.GstNo,
                 OfficePhone = partyModel.OfficePhone,
                 ContactPerson = partyModel.ContactPerson,
-                IsActive = partyModel.IsActive.ToLower() == "true" ? true : false
+                IsActive = partyModel.IsActive,
             };
 
          if (partyModel   == null)
@@ -152,10 +152,10 @@ namespace TransportService.Controllers.api
                 existingParty.GstNo = partyEntryForUpdate.GstNo;
                 existingParty.OfficePhone = partyEntryForUpdate.OfficePhone;
                 existingParty.ContactPerson = partyEntryForUpdate.ContactPerson;
-                existingParty.IsActive = partyEntryForUpdate.IsActive.ToLower()== "true" ? true : false; 
+                existingParty.IsActive = partyEntryForUpdate.IsActive; 
                 _context.Party.Update(existingParty);
                await _context.SaveChangesAsync();
-               return Ok("Party record updated and cache cleared.");
+               return Ok(existingParty);
            }
            catch (DbUpdateConcurrencyException)
            {

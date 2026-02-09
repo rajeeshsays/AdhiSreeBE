@@ -1,10 +1,15 @@
 public class DriverDTO
     {
-        public int ID { get; set; }
+        public int? ID { get; set; }
         public string Name { get; set; } = string.Empty;
+        public string AdhaarNo {get;set;} = string.Empty;
 
-        public string Code { get; set; } = string.Empty;
-        public string Mobile { get; set; } = string.Empty;
-        public string LicenseNumber { get; set; } = string.Empty;
+        public string Mobile1 {get;set;} = string.Empty;
+        public string? Mobile2 {get;set;} = string.Empty;
+        public string AddressLine1 {get;set;} = string.Empty;
+
+        public string? AddressLine2 {get;set;} = string.Empty;
+
+        public string LicenseNo { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;
     }

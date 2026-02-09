@@ -1,7 +1,7 @@
    public class PartyDTO
     {
         
-        public short ID { get; set; }
+        public short? ID { get; set; }
 
  
         public string Name { get; set; } = string.Empty;
@@ -31,6 +31,6 @@
 
         public string? ContactPerson {get;set;}
 
-        public string IsActive  {get;set;} = string.Empty;
+        public bool IsActive  {get;set;} = true;
         
     }

@@ -34,7 +34,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseCors(options =>
 {
     options.WithOrigins("http://localhost:3000","http://192.168.1.4:3000")
@@ -60,6 +60,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHttpsRedirection();
 }
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();
