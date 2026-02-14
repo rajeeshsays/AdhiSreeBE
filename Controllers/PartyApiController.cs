@@ -57,6 +57,36 @@ namespace TransportService.Controllers.api
            }
         }
 
+        [HttpGet("getparty")]
+        public async Task<IActionResult> GetPartyAsync()
+        {
+              if (_context == null)
+                return StatusCode(500, "Database context is not available.");
+
+            var party = await (from d in _context.Party
+                                  
+                                    select new
+                                    {
+                                      value =   d.ID,
+                                      label  =   d.Name,
+                                        
+                                    })
+                                    .ToListAsync();
+
+            if (party != null && party.Count > 0)
+            {
+                return Ok(party);
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+
+
+
+
         [HttpGet("getall/{page}/{pageSize}")]
 
         public async Task<IActionResult> GetAllAsync(int page, int pageSize)

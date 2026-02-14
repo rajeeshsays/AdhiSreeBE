@@ -62,8 +62,8 @@ namespace TransportService.Controllers.api
         {
             var locations = await (from x in  _context.Location select  new
             {
-                x.ID,
-                x.Name
+               value =  x.ID,
+                label = x.Name
             }).ToListAsync();
 
             if (locations != null)

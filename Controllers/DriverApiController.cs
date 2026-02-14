@@ -73,8 +73,8 @@ namespace TransportService.Controllers.api
                                                                          
               select new
               {
-                    d.ID,
-                    d.Name,
+                  value =   d.ID,
+                  label =   d.Name,
               })
               .ToListAsync();
                // where te.ID == page && dg.ID == pageSize
@@ -131,7 +131,7 @@ namespace TransportService.Controllers.api
            {
                await _context.Driver.AddAsync(driverModel);  
                await _context.SaveChangesAsync();
-               return Ok(driverModel);
+               return Ok("Driver created success fully");
            }
            catch
            {
