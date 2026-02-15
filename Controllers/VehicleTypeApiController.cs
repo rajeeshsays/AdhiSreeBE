@@ -150,8 +150,8 @@ namespace TransportService.Controllers.api
            return NoContent(); // 204
         }
         
-        [HttpGet("GetVehicleType")]
-        public async Task<IActionResult> GetVehicleTypeAsync()
+        [HttpGet("GetVehicleTypes")]
+        public async Task<IActionResult> GetVehicleTypesAsync()
         {
               if (_context == null)
                 return StatusCode(500, "Database context is not available.");

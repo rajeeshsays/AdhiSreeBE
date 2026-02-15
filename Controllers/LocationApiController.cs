@@ -57,8 +57,8 @@ namespace TransportService.Controllers.api
            }
         }
 
-        [HttpGet("getlocation")]
-        public async Task<IActionResult> GetLocationAsync()
+        [HttpGet("getlocations")]
+        public async Task<IActionResult> GetLocationsAsync()
         {
             var locations = await (from x in  _context.Location select  new
             {

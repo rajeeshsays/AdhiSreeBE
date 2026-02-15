@@ -61,8 +61,8 @@ namespace TransportService.Controllers.api
            }
         }
 
-         [HttpGet("getdriver")]
-        public async Task<IActionResult> GetDriverAsync()
+         [HttpGet("getdrivers")]
+        public async Task<IActionResult> GetDriversAsync()
 
         {
            if (_context == null)

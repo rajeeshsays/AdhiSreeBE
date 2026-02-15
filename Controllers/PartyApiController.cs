@@ -57,8 +57,8 @@ namespace TransportService.Controllers.api
            }
         }
 
-        [HttpGet("getparty")]
-        public async Task<IActionResult> GetPartyAsync()
+        [HttpGet("getparties")]
+        public async Task<IActionResult> GetPartiesAsync()
         {
               if (_context == null)
                 return StatusCode(500, "Database context is not available.");
