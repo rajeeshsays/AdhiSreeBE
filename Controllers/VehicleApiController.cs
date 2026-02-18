@@ -130,7 +130,7 @@ namespace TransportService.Controllers.api
            {
                return StatusCode(500, "Failed to create the vehicle record.");
            }
-
+             
         }
 
         // PUT api/<SalesController>/5

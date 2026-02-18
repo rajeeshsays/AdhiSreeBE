@@ -24,6 +24,8 @@ namespace TransportService.Model
 
         public string LicenceNo { get; set; } = string.Empty;
 
+        public DateOnly? dob {get;set;}
+
         public int AccountId { get; set; }
 
         public bool IsActive { get; set; } = true;

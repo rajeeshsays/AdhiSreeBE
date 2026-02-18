@@ -15,16 +15,16 @@ if (string.IsNullOrEmpty(connectionString))
 // Register DbContext with MariaDB
 builder.Services.AddDbContext<TransportServiceDBContext>(options =>
     options.UseMySql(
-        connectionString,
-        ServerVersion.AutoDetect(connectionString),
-        mySqlOptions =>
+        builder.Configuration.GetConnectionString("MariaDbConnection"),
+        new MySqlServerVersion(new Version(11, 8, 6)),
+        mysqlOptions =>
         {
-            mySqlOptions.EnableRetryOnFailure();
+            mysqlOptions.EnableRetryOnFailure(
+                5,
+                TimeSpan.FromSeconds(10),
+                null);
         }
-    )
-);
-
-
+    ));
 
 // Add framework services
 builder.Services.AddControllers();
@@ -37,7 +37,7 @@ var app = builder.Build();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseCors(options =>
 {
-    options.WithOrigins("http://localhost:3000","http://192.168.1.4:3000")
+    options.WithOrigins("http://localhost:3000","http://192.168.1.4:3000","http://localhost:8901")
            .AllowAnyHeader()
            .AllowAnyMethod();
 });
