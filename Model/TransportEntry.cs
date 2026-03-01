@@ -32,12 +32,11 @@ namespace TransportService.Model
             public short Party1 { get; set; }
 
             
-            public long DestinationGroupId { get; set; }
+
 
             [ForeignKey("Party1")]
             public Party? Party_Party1 { get; set; }
 
-            [ForeignKey("DestinationGroupId")]
             public ICollection<DestinationGroup> DestinationGroups { get; set; }
             = new List<DestinationGroup>();
 

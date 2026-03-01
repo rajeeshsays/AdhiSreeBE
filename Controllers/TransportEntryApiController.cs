@@ -52,12 +52,12 @@ namespace TransportService.Controllers.api
            var transportEntryDto = new TransportEntryDto
             {   
             ID = transData.ID,
-            Date = transData.Date,
+            Date = transData.Date.ToString("yyyy-MM-dd"),
             VehicleId = transData.VehicleId,
             VehicleTypeId = transData.VehicleTypeId,
             DriverId = transData.DriverId,
             Party1 = transData.Party1,           
-            DestinationGroupId = transData.DestinationGroupId,
+
             DestinationGroups = destinationGroups,
             From = transData.From,
             To = transData.To,
@@ -102,16 +102,48 @@ namespace TransportService.Controllers.api
                return StatusCode(500, "Database context is not available.");
            string cacheKey = $"TransportEntryData_page{page}_pageSize_{pageSize}";
            //if (!_cache.TryGetValue(cacheKey, out List<TransportEntry>? transData))
-           var transData = await (
-            from te in _context.TransportEntry
-            .Include(te => te.Vehicle)
 
-            join dg in _context.DestinationGroups
-            on te.ID equals dg.TransportId into dgGroup
+         
 
-            from dg in dgGroup.DefaultIfEmpty()
-            select te
-            ).Distinct().ToListAsync();
+var transData = await _context.TransportEntry.Include(v=>v.Vehicle)
+    .Select(te => new TransportEntryDto
+    {
+        ID = te.ID,
+        Date = te.Date.ToString("yyyy-MM-dd"),
+        VehicleId = te.VehicleId,
+        VehicleTypeId = te.VehicleTypeId,
+        DriverId = te.DriverId,
+        Party1 = te.Party1,
+        // ✅ Convert navigation collection to short[]
+        DestinationGroups = te.DestinationGroups
+            .Select(dg => (short)dg.DestinationId)
+            .ToArray(),
+
+        From = te.From,
+        To = te.To,
+        StartKM = te.StartKM,
+        CloseKM = te.CloseKM,
+        Total = te.Total,
+        Loading = te.Loading,
+        Unloading = te.Unloading,
+        LoadingCommision = te.LoadingCommision,
+        UnloadingCommision = te.UnloadingCommision,
+        ReturnDestinationId = te.ReturnDestinationId,
+        HaltDays = te.HaltDays,
+        Rent = te.Rent,
+        Narration = te.Narration,
+        Other = te.Other,
+        AccountId = te.AccountId,
+        Vehicle = te.Vehicle
+    })
+    .ToListAsync();
+
+
+
+
+
+
+
                // where te.ID == page && dg.ID == pageSize
               
            var cacheEntryOptions = new MemoryCacheEntryOptions()
@@ -144,7 +176,7 @@ namespace TransportService.Controllers.api
         // 1️⃣ Create TransportEntry (PARENT)
         var transportEntry = new TransportEntry
         {
-            Date = transportData.TransportEntry.Date,
+            Date = Convert.ToDateTime(transportData.TransportEntry.Date),
             VehicleId = transportData.TransportEntry.VehicleId,
             VehicleTypeId = transportData.TransportEntry.VehicleTypeId,
             DriverId = transportData.TransportEntry.DriverId,
@@ -164,7 +196,6 @@ namespace TransportService.Controllers.api
             Narration = transportData.TransportEntry.Narration,
             Other = transportData.TransportEntry.Other,
             AccountId = transportData.TransportEntry.AccountId,
-            DestinationGroupId  = 0
         };
 
 
@@ -185,7 +216,7 @@ namespace TransportService.Controllers.api
             }).ToList();
 
         await _context.DestinationGroups.AddRangeAsync(destinationGroups);
-        transportEntry.DestinationGroupId = destinationGroups.First().TransportId;
+  
         // 5️⃣ Save children
         await _context.SaveChangesAsync();
 
@@ -231,7 +262,7 @@ namespace TransportService.Controllers.api
         // 1️⃣ Update parent entity
         var dto = model.TransportEntry;
 
-        transportEntry.Date = dto.Date;
+        transportEntry.Date = Convert.ToDateTime(dto.Date);
         transportEntry.VehicleId = dto.VehicleId;
         transportEntry.VehicleTypeId = dto.VehicleTypeId;
         transportEntry.DriverId = dto.DriverId;

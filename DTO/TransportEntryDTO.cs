@@ -10,10 +10,11 @@ namespace TransportService.Model
             
             public long ID { get; set; } = 0;
 
-            public DateTime Date { get; set; } = DateTime.Now;
+            public string Date { get; set; } = string.Empty;
 
             // Foreign Key
             public short VehicleId { get; set; }
+
 
             // Navigation property
             public short VehicleTypeId { get; set; }
@@ -25,7 +26,6 @@ namespace TransportService.Model
             public short Party1 { get; set; }
 
             
-            public long DestinationGroupId { get; set; }
 
             public short[] DestinationGroups { get; set; }
             public int From { get; set; }
@@ -60,6 +60,8 @@ namespace TransportService.Model
             public string? Other { get; set; }
 
             public int AccountId { get; set; }
+
+            public Vehicle Vehicle {get;set;} = new Vehicle();
    
 
         }

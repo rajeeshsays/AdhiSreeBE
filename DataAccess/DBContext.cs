@@ -65,6 +65,11 @@ namespace TransportService.DataAccess
             .HasForeignKey(e => e.TypeId)
             .OnDelete(DeleteBehavior.Restrict);
 
+    modelBuilder.Entity<DestinationGroup>()
+    .HasOne(d => d.TransportEntry)
+    .WithMany(t => t.DestinationGroups)
+    .HasForeignKey(d => d.TransportId);
+
         }
 
     }

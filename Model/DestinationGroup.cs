@@ -9,11 +9,15 @@ namespace TransportService.Model
         [Key]
         public long ID { get; set; }
 
+        [ForeignKey("TransportId")]
+
         public long TransportId {get;set;}
         public short DestinationId { get; set; }
 
         [ForeignKey("DestinationId")]
         public Party? Party { get; set; }
+
+        public TransportEntry TransportEntry {get;set;}
         
     }
 
