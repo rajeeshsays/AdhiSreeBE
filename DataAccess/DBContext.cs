@@ -1,5 +1,6 @@
 ﻿using TransportService.Model;
 using Microsoft.EntityFrameworkCore;
+using Humanizer;
 
 
 namespace TransportService.DataAccess
@@ -68,7 +69,14 @@ namespace TransportService.DataAccess
     modelBuilder.Entity<DestinationGroup>()
     .HasOne(d => d.TransportEntry)
     .WithMany(t => t.DestinationGroups)
-    .HasForeignKey(d => d.TransportId);
+    .HasForeignKey(d => d.TransportId)
+    .OnDelete(DeleteBehavior.Restrict);
+
+     modelBuilder.Entity<TransportEntry>()
+    .HasOne(d => d.Vehicle)
+    .WithMany()
+    .HasForeignKey(d => d.VehicleId)
+    .OnDelete(DeleteBehavior.Restrict);
 
         }
 

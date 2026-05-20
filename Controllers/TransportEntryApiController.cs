@@ -105,7 +105,7 @@ namespace TransportService.Controllers.api
 
          
 
-var transData = await _context.TransportEntry.Include(v=>v.Vehicle)
+var transData = await _context.TransportEntry.Include(v=>v.Vehicle).Include(l=>l.LocationFrom).Include(d=>d.LocationTo)
     .Select(te => new TransportEntryDto
     {
         ID = te.ID,
@@ -121,6 +121,8 @@ var transData = await _context.TransportEntry.Include(v=>v.Vehicle)
 
         From = te.From,
         To = te.To,
+        FromText = te.LocationFrom != null ? te.LocationFrom.Name : string.Empty,
+        ToText = te.LocationTo != null ? te.LocationTo.Name : string.Empty,
         StartKM = te.StartKM,
         CloseKM = te.CloseKM,
         Total = te.Total,
@@ -137,12 +139,6 @@ var transData = await _context.TransportEntry.Include(v=>v.Vehicle)
         Vehicle = te.Vehicle
     })
     .ToListAsync();
-
-
-
-
-
-
 
                // where te.ID == page && dg.ID == pageSize
               

@@ -16,6 +16,7 @@ if (string.IsNullOrEmpty(connectionString))
 builder.Services.AddDbContext<TransportServiceDBContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("MariaDbConnection"),
+        //builder.Configuration.GetConnectionString("MySqlCloudConnection"),
         new MySqlServerVersion(new Version(11, 8, 6)),
         mysqlOptions =>
         {
@@ -37,7 +38,9 @@ var app = builder.Build();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseCors(options =>
 {
-    options.WithOrigins("http://localhost:3000","http://192.168.1.4:3000","http://localhost:8901")
+  
+    options.WithOrigins("http://localhost:3000","http://192.168.1.4:3000","http://localhost:8901","http://10.0.0.242:80")
+
            .AllowAnyHeader()
            .AllowAnyMethod();
 });

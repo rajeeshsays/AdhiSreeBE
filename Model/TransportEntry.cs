@@ -31,9 +31,6 @@ namespace TransportService.Model
 
             public short Party1 { get; set; }
 
-            
-
-
             [ForeignKey("Party1")]
             public Party? Party_Party1 { get; set; }
 

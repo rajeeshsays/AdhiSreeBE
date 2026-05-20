@@ -32,6 +32,10 @@ namespace TransportService.Model
 
             public int To { get; set; }
 
+            public string FromText { get; set; } = string.Empty;
+
+            public string ToText { get; set; } = string.Empty;
+            
             public decimal StartKM { get; set; }
 
             public decimal CloseKM { get; set; }
