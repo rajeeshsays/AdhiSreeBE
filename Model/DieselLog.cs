@@ -1,11 +1,13 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using TransportService.Model;
 
 public class DieselLog
 {
+    [Key]
     public int Id { get; set; }
 
-    public int VehicleId { get; set; }
+    public short VehicleId { get; set; }
 
     public DateOnly Date { get; set; }
 
@@ -16,12 +18,12 @@ public class DieselLog
     [Column(TypeName = "decimal(18,2)")]
     public decimal PricePerUnit { get; set; }
 
-    public int SourceId { get; set; } // 0 for own, 1 for external
+    public short SourceId { get; set; } // 0 for own, 1 for external
 
-    public decimal OdometerReading { get; set; }
+    public int OdometerReading { get; set; }
 
     public string? Remarks { get; set; }
-    
+
 
 
     [ForeignKey("SourceId") ]
