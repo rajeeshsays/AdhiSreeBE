@@ -8,11 +8,11 @@ namespace AdhiSreeTransportService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DieselLogController : ControllerBase
+    public class DieselLogApiController : ControllerBase
     {
         private readonly TransportServiceDBContext _context;
 
-        public DieselLogController(TransportServiceDBContext context)
+        public DieselLogApiController(TransportServiceDBContext context)
         {
             _context = context;
         }

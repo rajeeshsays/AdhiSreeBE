@@ -33,6 +33,9 @@ namespace AdhiSreeTransportService.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
+                    b.Property<short>("DriverId")
+                        .HasColumnType("smallint");
+
                     b.Property<int>("OdometerReading")
                         .HasColumnType("int");
 
@@ -185,6 +188,37 @@ namespace AdhiSreeTransportService.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Driver");
+                });
+
+            modelBuilder.Entity("TransportService.Model.DriverLedger", b =>
+                {
+                    b.Property<short>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("smallint");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<short>("ID"));
+
+                    b.Property<decimal?>("Credit")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("Debit")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<short>("DriverId")
+                        .HasColumnType("smallint");
+
+                    b.Property<string>("Remarks")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateOnly>("TransactionDate")
+                        .HasColumnType("date");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("DriverId");
+
+                    b.ToTable("DriverLedgers");
                 });
 
             modelBuilder.Entity("TransportService.Model.Location", b =>
@@ -398,6 +432,42 @@ namespace AdhiSreeTransportService.Migrations
                     b.ToTable("Vehicle");
                 });
 
+            modelBuilder.Entity("TransportService.Model.VehicleMaintenance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<short>("DriverId")
+                        .HasColumnType("smallint");
+
+                    b.Property<decimal>("Kilometers")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateOnly>("MaintenanceDate")
+                        .HasColumnType("date");
+
+                    b.Property<short>("VehicleId")
+                        .HasColumnType("smallint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DriverId");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("VehicleMaintenance");
+                });
+
             modelBuilder.Entity("TransportService.Model.VehicleType", b =>
                 {
                     b.Property<short>("ID")
@@ -521,6 +591,17 @@ namespace AdhiSreeTransportService.Migrations
                     b.Navigation("TransportEntry");
                 });
 
+            modelBuilder.Entity("TransportService.Model.DriverLedger", b =>
+                {
+                    b.HasOne("TransportService.Model.Driver", "Driver")
+                        .WithMany()
+                        .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Driver");
+                });
+
             modelBuilder.Entity("TransportService.Model.Location", b =>
                 {
                     b.HasOne("District", "District")
@@ -600,6 +681,25 @@ namespace AdhiSreeTransportService.Migrations
                         .IsRequired();
 
                     b.Navigation("VehicleType");
+                });
+
+            modelBuilder.Entity("TransportService.Model.VehicleMaintenance", b =>
+                {
+                    b.HasOne("TransportService.Model.Driver", "Driver")
+                        .WithMany()
+                        .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TransportService.Model.Vehicle", "Vehicle")
+                        .WithMany()
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Driver");
+
+                    b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("VehicleAlerts", b =>

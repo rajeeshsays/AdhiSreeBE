@@ -24,10 +24,10 @@ public class DieselLog
 
     public string? Remarks { get; set; }
 
-
+    public short DriverId { get; set; }
 
     [ForeignKey("SourceId") ]
-    public required Party Source { get; set; } // Navigation property to Party
+    public virtual Party? Source { get; set; } // Navigation property to Party
 
 
 
@@ -35,7 +35,7 @@ public class DieselLog
     public decimal TotalCost { get; set; }
 
     [ForeignKey("VehicleId")]
-    public required Vehicle Vehicle { get; set; } // Navigation property to Vehicle
+    public  virtual Vehicle? Vehicle { get; set; } // Navigation property to Vehicle
 
 }
 

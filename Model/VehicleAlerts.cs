@@ -5,6 +5,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using TransportService.Model;
 
 public class VehicleAlerts
@@ -47,7 +48,8 @@ public class VehicleAlerts
 
 
     [ForeignKey("VehicleId")]
-    public required Vehicle Vehicle { get; set; } // Navigation property to Vehicle
+    [ValidateNever]
+    public Vehicle? Vehicle { get; set; } // Navigation property to Vehicle
     
 }
 

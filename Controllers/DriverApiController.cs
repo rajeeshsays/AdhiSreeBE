@@ -105,9 +105,7 @@ namespace TransportService.Controllers.api
               select te).ToListAsync();
                // where te.ID == page && dg.ID == pageSize
               
-           var cacheEntryOptions = new MemoryCacheEntryOptions()
-               .SetSlidingExpiration(TimeSpan.FromMinutes(10))
-               .SetAbsoluteExpiration(TimeSpan.FromHours(1));
+
       
            if (driver != null)
            {

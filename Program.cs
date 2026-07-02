@@ -35,7 +35,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.UseMiddleware<ExceptionHandlingMiddleware>();
+//app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseCors(options =>
 {
   
@@ -49,7 +49,7 @@ app.UseCors(options =>
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<TransportServiceDBContext>();
-    db.Database.Migrate();
+    
 }
 
 // Configure middleware pipeline

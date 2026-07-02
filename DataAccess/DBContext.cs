@@ -27,7 +27,13 @@ namespace TransportService.DataAccess
 
         public DbSet<State> State { get; set; }
         public DbSet<DieselLog> DieselLogs { get; set; }
+
         public DbSet<VehicleAlerts> VehicleAlerts { get; set; }
+
+
+        public DbSet<VehicleMaintenance> VehicleMaintenance { get; set; }
+
+        public DbSet<DriverLedger> DriverLedgers { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

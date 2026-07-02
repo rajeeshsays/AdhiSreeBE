@@ -12,8 +12,8 @@ using TransportService.DataAccess;
 namespace AdhiSreeTransportService.Migrations
 {
     [DbContext(typeof(TransportServiceDBContext))]
-    [Migration("20260203092549_statedistrict2")]
-    partial class statedistrict2
+    [Migration("20260606091048_VehicleMaintenance added")]
+    partial class VehicleMaintenanceadded
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,47 @@ namespace AdhiSreeTransportService.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+
+            modelBuilder.Entity("DieselLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<int>("OdometerReading")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("PricePerUnit")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("longtext");
+
+                    b.Property<short>("SourceId")
+                        .HasColumnType("smallint");
+
+                    b.Property<decimal>("TotalCost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<short>("VehicleId")
+                        .HasColumnType("smallint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SourceId");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("DieselLogs");
+                });
 
             modelBuilder.Entity("District", b =>
                 {
@@ -81,9 +122,6 @@ namespace AdhiSreeTransportService.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("ID"));
 
-                    b.Property<long?>("DestinationGroupId")
-                        .HasColumnType("bigint");
-
                     b.Property<short>("DestinationId")
                         .HasColumnType("smallint");
 
@@ -92,9 +130,9 @@ namespace AdhiSreeTransportService.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("DestinationGroupId");
-
                     b.HasIndex("DestinationId");
+
+                    b.HasIndex("TransportId");
 
                     b.ToTable("DestinationGroups");
                 });
@@ -111,6 +149,7 @@ namespace AdhiSreeTransportService.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("AddressLine1")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 
@@ -118,7 +157,7 @@ namespace AdhiSreeTransportService.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("varchar(256)");
 
-                    b.Property<string>("AdharNo")
+                    b.Property<string>("AdhaarNo")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -142,6 +181,9 @@ namespace AdhiSreeTransportService.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<DateOnly?>("dob")
+                        .HasColumnType("date");
 
                     b.HasKey("ID");
 
@@ -194,12 +236,29 @@ namespace AdhiSreeTransportService.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("AddressLine1")
+                        .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("varchar(250)");
 
                     b.Property<string>("AddressLine2")
                         .HasMaxLength(250)
                         .HasColumnType("varchar(250)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("ContactPerson")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("GstNo")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Mobile")
                         .IsRequired()
@@ -210,6 +269,11 @@ namespace AdhiSreeTransportService.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
+
+                    b.Property<string>("OfficePhone")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("varchar(80)");
 
                     b.Property<string>("Pincode")
                         .IsRequired()
@@ -237,9 +301,6 @@ namespace AdhiSreeTransportService.Migrations
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<long>("DestinationGroupId")
-                        .HasColumnType("bigint");
 
                     b.Property<short>("DriverId")
                         .HasColumnType("smallint");
@@ -319,6 +380,9 @@ namespace AdhiSreeTransportService.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<short>("ID"));
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<string>("Model")
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
@@ -337,6 +401,40 @@ namespace AdhiSreeTransportService.Migrations
                     b.ToTable("Vehicle");
                 });
 
+            modelBuilder.Entity("TransportService.Model.VehicleMaintenance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Cost")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<short>("DriverId")
+                        .HasColumnType("smallint");
+
+                    b.Property<decimal>("Kilometers")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateOnly>("MaintenanceDate")
+                        .HasColumnType("date");
+
+                    b.Property<short>("VehicleId")
+                        .HasColumnType("smallint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("VehicleMaintenance");
+                });
+
             modelBuilder.Entity("TransportService.Model.VehicleType", b =>
                 {
                     b.Property<short>("ID")
@@ -352,9 +450,82 @@ namespace AdhiSreeTransportService.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)");
+
                     b.HasKey("ID");
 
                     b.ToTable("VehicleType");
+                });
+
+            modelBuilder.Entity("VehicleAlerts", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Emi")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<short>("EmiDaysLeft")
+                        .HasColumnType("smallint");
+
+                    b.Property<DateOnly>("EmiDueDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("FuelStationName")
+                        .HasColumnType("longtext");
+
+                    b.Property<short>("InsuranceDaysLeft")
+                        .HasColumnType("smallint");
+
+                    b.Property<DateOnly>("InsuranceExpiry")
+                        .HasColumnType("date");
+
+                    b.Property<short>("InsuranceStatus")
+                        .HasColumnType("smallint");
+
+                    b.Property<short>("PollutionDaysLeft")
+                        .HasColumnType("smallint");
+
+                    b.Property<DateOnly>("PollutionExpiry")
+                        .HasColumnType("date");
+
+                    b.Property<short>("PollutionStatus")
+                        .HasColumnType("smallint");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("longtext");
+
+                    b.Property<short>("VehicleId")
+                        .HasColumnType("smallint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("VehicleAlerts");
+                });
+
+            modelBuilder.Entity("DieselLog", b =>
+                {
+                    b.HasOne("TransportService.Model.Party", "Source")
+                        .WithMany()
+                        .HasForeignKey("SourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TransportService.Model.Vehicle", "Vehicle")
+                        .WithMany()
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Source");
+
+                    b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("District", b =>
@@ -370,17 +541,21 @@ namespace AdhiSreeTransportService.Migrations
 
             modelBuilder.Entity("TransportService.Model.DestinationGroup", b =>
                 {
-                    b.HasOne("TransportService.Model.TransportEntry", null)
-                        .WithMany("DestinationGroups")
-                        .HasForeignKey("DestinationGroupId");
-
                     b.HasOne("TransportService.Model.Party", "Party")
                         .WithMany()
                         .HasForeignKey("DestinationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("TransportService.Model.TransportEntry", "TransportEntry")
+                        .WithMany("DestinationGroups")
+                        .HasForeignKey("TransportId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Party");
+
+                    b.Navigation("TransportEntry");
                 });
 
             modelBuilder.Entity("TransportService.Model.Location", b =>
@@ -429,7 +604,7 @@ namespace AdhiSreeTransportService.Migrations
                     b.HasOne("TransportService.Model.Vehicle", "Vehicle")
                         .WithMany()
                         .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("TransportService.Model.VehicleType", "VehicleType")
@@ -462,6 +637,28 @@ namespace AdhiSreeTransportService.Migrations
                         .IsRequired();
 
                     b.Navigation("VehicleType");
+                });
+
+            modelBuilder.Entity("TransportService.Model.VehicleMaintenance", b =>
+                {
+                    b.HasOne("TransportService.Model.Vehicle", "Vehicle")
+                        .WithMany()
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("VehicleAlerts", b =>
+                {
+                    b.HasOne("TransportService.Model.Vehicle", "Vehicle")
+                        .WithMany()
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("TransportService.Model.TransportEntry", b =>

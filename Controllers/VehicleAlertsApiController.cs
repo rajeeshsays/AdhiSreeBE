@@ -7,11 +7,11 @@ namespace AdhiSreeTransportService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class VehicleAlertsController : ControllerBase
+    public class VehicleAlertsApiController : ControllerBase
     {
         private readonly TransportServiceDBContext _context;
 
-        public VehicleAlertsController(TransportServiceDBContext context)
+        public VehicleAlertsApiController(TransportServiceDBContext context)
         {
             _context = context;
         }
@@ -58,7 +58,7 @@ namespace AdhiSreeTransportService.Controllers
         public async Task<ActionResult<VehicleAlerts>> CreateVehicleAlert(VehicleAlerts vehicleAlert)
         {
             var vehicleExists = await _context.Vehicle
-                .AnyAsync(v => v.Id == vehicleAlert.VehicleId);
+                .AnyAsync(v => v.ID == vehicleAlert.VehicleId);
 
             if (!vehicleExists)
             {
@@ -84,7 +84,7 @@ namespace AdhiSreeTransportService.Controllers
             }
 
             var vehicleExists = await _context.Vehicle
-                .AnyAsync(v => v.Id == vehicleAlert.VehicleId);
+                .AnyAsync(v => v.ID == vehicleAlert.VehicleId);
 
             if (!vehicleExists)
             {
