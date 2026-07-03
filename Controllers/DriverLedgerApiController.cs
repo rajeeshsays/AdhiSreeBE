@@ -27,9 +27,8 @@ namespace TransportService.Controllers.api
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetAsync(int id)
+        public async Task<IActionResult> GetAsync(int id = 0)
         {
-            var x = await _context.DriverLedgers.ToListAsync();
            var ledger = await _context.DriverLedgers.Where(x => x.DriverId == id)                                  
               .ToListAsync();
 
